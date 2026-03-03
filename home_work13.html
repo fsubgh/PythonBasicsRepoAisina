@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Адаптивная страница</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 20px;
+      font-size: 14px; 
+    }
+
+    img {
+      max-width: 100%;
+      height: auto; 
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    button {
+      display: block;
+      width: 100%;     
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    @media (min-width: 768px) and (max-width: 1024px) {
+      p {
+        font-size: 16px; 
+      }
+
+      button {
+        width: 200px; 
+        padding: 12px;
+      }
+
+      img {
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .container {
+        text-align: center; 
+      }
+
+      p {
+        font-size: 18px;
+      }
+
+      button {
+        display: inline-block; 
+        width: 220px;
+        padding: 12px;
+        font-size: 16px;
+      }
+
+      img {
+        max-width: 600px;     
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Адаптивная страница</h1>
+    <p>Это пример простой адаптивной страницы, которая корректно отображается на мобильных устройствах, планшетах и десктопах.</p>
+
+    <img src="/Users/ajsinaidrisova/Desktop/html/Unknown.jpeg"
+         alt="Пример изображения">
+
+    <button>Нажми меня</button>
+  </div>
+</body>
+</html>
