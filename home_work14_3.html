@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input id="a1" value="2" type="number" disabled>+
+<input id="b1" value="2" type="number" disabled>=
+<input id="result1" type="number"><button onclick="check()">Проверить</button>
+<div id="msg"></div>
+<script>
+      function check() {
+        const a = Number(document.getElementById("a1").value);
+        const b = Number(document.getElementById("b1").value);
+        const resultInput = document.getElementById("result1");
+        const userAnswer = Number(resultInput.value);
+        const msg = document.getElementById("msg");
+
+        resultInput.disabled = true;
+
+        if (userAnswer === a + b){
+            msg.textContent = "Alright";
+            msg.style.color = "green";
+        }else{
+            msg.textContent = "no";
+            msg.style.color = "red";
+        }
+      }
+</script>
+</body>
+</html>
