@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Форма: имя и возраст</title>
+  </head>
+  <body>
+    <h2>Анкета</h2>
+
+    <form id="userForm">
+      <label>
+        Имя
+        <input id="name" name="name" type="text" autocomplete="given-name" />
+      </label>
+
+      <label>
+        Возраст
+        <input id="age" name="age" type="text" inputmode="numeric" />
+      </label>
+
+      <button type="submit">Отправить</button>
+    </form>
+
+    <div id="message" aria-live="polite"></div>
+
+    <script>
+      const form = document.getElementById("userForm");
+      const nameInput = document.getElementById("name");
+      const ageInput = document.getElementById("age");
+      const message = document.getElementById("message");
+
+      function showMessage(text, type) {
+        message.textContent = text;
+        message.className = type === "ok" ? "ok" : "error";
+      }
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault(); 
+
+        const name = nameInput.value.trim();
+        const ageValue = ageInput.value.trim();
+
+        const age = Number(ageValue); 
+        if (name === "") {
+          showMessage("Ошибка: введите имя.", "error");
+          return;
+        }
+        if (ageValue === "" || isNaN(age) || age <= 0) {
+          showMessage("Ошибка: возраст должен быть положительным числом.", "error");
+          return;
+        }
+
+        showMessage(`Привет, ${name}! Твой возраст: ${age}.`, "ok");
+      });
+    </script>
+  </body>
+</html>
