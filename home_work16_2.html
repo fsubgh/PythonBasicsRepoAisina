@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form class="register-form">
+        <label>
+            Имя
+            <input type="text" class="name-input"> 
+        </label>
+         <input type="checkbox" class="agree-checkbox"> 
+         <button type="button" class="validate-button">.
+    </form>
+    <script>
+        const form = document.querySelector(".register-form")
+        const nameInput = document.querySelector(".name-input")
+        const agreeCheckbox = document.querySelector(".agree-checkbox");
+        const validateButton = document.querySelector(".validate-button");
+
+        function validate(){
+            const name = nameInput.value.trim();
+            const agreed = agreeCheckbox.checked;
+
+            if(name === ""){
+                return{ok: false, message: "Ошибка: имя не должно быть пустым."}
+            }
+            if(!agreed){
+                return{ok: false, message: "Ошибка: вы должны согласится"}
+            }
+            return{ok: true, message: `Успех, пользователь ${name} может бытьь зарегистрирован `}
+        }
+        validateButton.addEventListener("click", function () {
+        const result = validate();
+        console.log("[click] validate:", result.message);
+      });
+    </script>
+</body>
+</html>
