@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Домашнее задание 17 — форма</title>
+</head>
+<body>
+  <h2>Отправка данных</h2>
+
+  <form class="user-form" id="userForm" novalidate>
+    <label>
+      Имя
+      <input type="text" name="name" class="name-input" autocomplete="name" />
+      <span class="field-error" data-for="name"></span>
+    </label>
+
+    <label>
+      Email (обязательно)
+      <input
+        type="email"
+        name="email"
+        class="email-input"
+        required
+        autocomplete="email"
+      />
+      <span class="field-error" data-for="email"></span>
+    </label>
+
+    <label>
+      Страна
+      <select name="country" class="country-select">
+        <option value="">Выберите страну</option>
+        <option value="ru">Россия</option>
+        <option value="kz">Казахстан</option>
+        <option value="by">Беларусь</option>
+      </select>
+      <span class="field-error" data-for="country"></span>
+    </label>
+
+    <label>
+      Комментарий
+      <textarea name="comment" class="comment-textarea"></textarea>
+      <span class="field-error" data-for="comment"></span>
+    </label>
+
+    <button type="submit">Отправить</button>
+  </form>
+
+  <div id="message" role="status"></div>
+
+  <script>
+    const form = document.getElementById("userForm");
+    const messageBox = document.getElementById("message");
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    function showFieldError(name, text) {
+      const el = form.querySelector(`.field-error[data-for="${name}"]`);
+      if (el) el.textContent = text;
+    }
+
+    function clearErrors() {
+      form.querySelectorAll(".field-error").forEach((el) => (el.textContent = ""));
+      messageBox.className = "";
+      messageBox.style.display = "none";
+      messageBox.textContent = "";
+    }
+
+    function showMessage(text, type) {
+      messageBox.textContent = text;
+      messageBox.className = type;
+      messageBox.style.display = "block";
+    }
+
+    function validate(formData) {
+      let valid = true;
+      const name = formData.get("name").trim();
+      const email = formData.get("email").trim();
+      const country = formData.get("country");
+      const comment = formData.get("comment").trim();
+
+      if (name.length < 2) {
+        showFieldError("name", "Имя: минимум 2 символа.");
+        valid = false;
+      }
+
+      if (!email) {
+        showFieldError("email", "Email обязателен.");
+        valid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showFieldError("email", "Некорректный email.");
+        valid = false;
+      }
+
+      if (!country) {
+        showFieldError("country", "Выберите страну.");
+        valid = false;
+      }
+
+      if (comment.length > 0 && comment.length < 5) {
+        showFieldError("comment", "Комментарий: минимум 5 символов или оставьте пустым.");
+        valid = false;
+      }
+
+      return valid;
+    }
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      clearErrors();
+
+      const formData = new FormData(form);
+
+      if (!validate(formData)) {
+        showMessage("Исправьте ошибки в форме.", "error");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      showMessage("Отправка...", "ok");
+
+      try {
+        const response = await fetch("https://httpbin.org/post", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Сервер вернул ошибку: " + response.status);
+        }
+
+        const result = await response.json();
+        console.log("Ответ сервера:", result);
+
+        showMessage(
+          "Данные успешно отправлены! Смотрите ответ в консоли (F12).",
+          "ok"
+        );
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        showMessage(
+          "Не удалось отправить. Проверьте интернет или откройте страницу через http:// (Live Server).",
+          "error"
+        );
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
