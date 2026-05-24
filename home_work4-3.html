@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ДЗ 4 — Управление пользователями</title>
+</head>
+<body>
+
+<div class="container">
+    <h1>Домашнее задание 4</h1>
+    <p><strong>Управление списком пользователей</strong></p>
+    <ul>
+        <li><code>addUser("Имя", возраст)</code> — добавить пользователя</li>
+        <li><code>removeUser("Имя")</code> — удалить пользователя</li>
+        <li><code>getUserInfo("Имя")</code> — получить информацию</li>
+    </ul>
+</div>
+
+<script>
+    const users = [];
+
+    function addUser(name, age) {
+        if (typeof name !== "string" || !name.trim()) {
+            console.error("Ошибка: Имя должно быть непустой строкой.");
+            return;
+        }
+        if (typeof age !== "number" || age <= 0) {
+            console.error("Ошибка: Возраст должен быть положительным числом.");
+            return;
+        }
+
+        const normalizedName = name.trim().toLowerCase();
+        if (users.some(user => user.name.toLowerCase() === normalizedName)) {
+            console.error(`Ошибка: Пользователь с именем "${name}" уже существует.`);
+            return;
+        }
+
+        users.push({ name: name.trim(), age });
+        console.log(` Пользователь "${name}" успешно добавлен.`);
+    }
+
+
+    function removeUser(name) {
+        if (typeof name !== "string" || !name.trim()) {
+            console.error("Ошибка: Имя должно быть непустой строкой.");
+            return;
+        }
+
+        const normalizedName = name.trim().toLowerCase();
+        const index = users.findIndex(user => user.name.toLowerCase() === normalizedName);
+
+        if (index === -1) {
+            console.error(`Ошибка: Пользователь с именем "${name}" не найден.`);
+            return;
+        }
+
+        const removedUser = users.splice(index, 1)[0];
+        console.log(` Пользователь "${removedUser.name}" успешно удалён.`);
+    }
+
+    function getUserInfo(name) {
+        if (typeof name !== "string" || !name.trim()) {
+            console.error("Ошибка: Имя должно быть непустой строкой.");
+            return;
+        }
+
+        const normalizedName = name.trim().toLowerCase();
+        const user = users.find(user => user.name.toLowerCase() === normalizedName);
+
+        if (!user) {
+            console.error(`Ошибка: Пользователь с именем "${name}" не найден.`);
+            return;
+        }
+
+        console.log(`Имя: ${user.name}, Возраст: ${user.age}`);
+    }
+</script>
+
+</body>
+</html>
