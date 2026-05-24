@@ -1,11 +1,11 @@
 const libraryBook = {
-    title: "Преступление и наказание",
-    author: "Ф. М. Достоевский",
-    genre: "detektiv",
-    year: 1866,
-    available: true,
+    title: "ПРеступление и наказачние",
+    author : "Достоевский Ф.М.",
+    genre : "Классическая литература",
+    year : 1866,
+    available: true
 }
 libraryBook.raiting = 4.8;
-libraryBook.available = !libraryBook.available;
-delete libraryBook.genre;
-console.log(libraryBook);
+delete libraryBook.available;
+libraryBook.available = false
+console.log(libraryBook)
