@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<button id="openModal">Открыть окно</button>
+
+
+<dialog id="myDialog">
+    <h2>Заголовок окна</h2>
+    <button id="closeModal">Закрыть</button>
+</dialog>
+<script>
+    const openBtn = document.getElementById('openModal');
+    const closeBtn = document.getElementById('closeModal');
+    const dialog = document.getElementById('myDialog');
+    openBtn.addEventListener('click', () => dialog.showModal());
+    closeBtn.addEventListener('click', () => dialog.close());
+</script>
+</body>
+</html>

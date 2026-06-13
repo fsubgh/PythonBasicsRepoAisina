@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кнопки с подсказками</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 2rem;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 1.75rem;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .btn {
+      position: relative;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #fff;
+      background: #4a90d9;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #357abd;
+    }
+
+    .btn--secondary {
+      background: #6c757d;
+    }
+
+    .btn--secondary:hover {
+      background: #5a6268;
+    }
+
+    .btn--success {
+      background: #43a047;
+    }
+
+    .btn--success:hover {
+      background: #388e3c;
+    }
+
+    .btn--danger {
+      background: #e53935;
+    }
+
+    .btn--danger:hover {
+      background: #c62828;
+    }
+
+    .top-section {
+      margin-bottom: 60vh;
+    }
+
+    .tooltip {
+      position: fixed;
+      z-index: 1000;
+      padding: 0.5rem 0.75rem;
+      max-width: 240px;
+      font-size: 0.875rem;
+      line-height: 1.4;
+      color: #fff;
+      background: #333;
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.15s;
+      white-space: normal;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .tooltip::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+    }
+
+    .tooltip--top::after {
+      top: 100%;
+      border-top-color: #333;
+    }
+
+    .tooltip--bottom::after {
+      bottom: 100%;
+      border-bottom-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Кнопки с подсказками</h1>
+
+  <section class="top-section">
+    <p style="margin-bottom: 1rem; color: #666;">
+      Кнопки у верхнего края — подсказка показывается снизу, если сверху не хватает места.
+    </p>
+    <div class="buttons">
+      <button class="btn" type="button" data-tooltip="Сохранить изменения в документе">
+        Сохранить
+      </button>
+      <button class="btn btn--secondary" type="button" data-tooltip="Отменить последнее действие">
+        Отменить
+      </button>
+      <button class="btn btn--success" type="button" data-tooltip="Добавить новый элемент в список">
+        Добавить
+      </button>
+    </div>
+  </section>
+
+  <section>
+    <p style="margin-bottom: 1rem; color: #666;">
+      Кнопки ниже — подсказка по умолчанию сверху.
+    </p>
+    <div class="buttons">
+      <button class="btn btn--danger" type="button" data-tooltip="Удалить выбранный элемент без возможности восстановления">
+        Удалить
+      </button>
+      <button class="btn" type="button" data-tooltip="Открыть настройки приложения">
+        Настройки
+      </button>
+      <button class="btn btn--secondary" type="button" data-tooltip="Экспортировать данные в файл формата CSV">
+        Экспорт
+      </button>
+      <button class="btn btn--success" type="button" data-tooltip="Отправить форму на сервер">
+        Отправить
+      </button>
+    </div>
+  </section>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    const tooltip = document.getElementById("tooltip");
+    const buttons = document.querySelectorAll("[data-tooltip]");
+
+    const GAP = 8;
+    const VIEWPORT_PADDING = 8;
+
+    function showTooltip(button) {
+      const text = button.dataset.tooltip;
+      tooltip.textContent = text;
+      tooltip.classList.remove("tooltip--top", "tooltip--bottom", "visible");
+
+      tooltip.style.left = "0";
+      tooltip.style.top = "0";
+      tooltip.style.visibility = "hidden";
+      tooltip.style.display = "block";
+
+      const buttonRect = button.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      const spaceAbove = buttonRect.top - VIEWPORT_PADDING;
+      const spaceBelow = window.innerHeight - buttonRect.bottom - VIEWPORT_PADDING;
+      const showAbove = spaceAbove >= tooltipRect.height + GAP || spaceAbove >= spaceBelow;
+
+      tooltip.classList.add(showAbove ? "tooltip--top" : "tooltip--bottom");
+
+      let top;
+      if (showAbove) {
+        top = buttonRect.top - tooltipRect.height - GAP;
+      } else {
+        top = buttonRect.bottom + GAP;
+      }
+
+      let left = buttonRect.left + buttonRect.width / 2 - tooltipRect.width / 2;
+      left = Math.max(
+        VIEWPORT_PADDING,
+        Math.min(left, window.innerWidth - tooltipRect.width - VIEWPORT_PADDING)
+      );
+
+      tooltip.style.left = `${left}px`;
+      tooltip.style.top = `${top}px`;
+      tooltip.style.visibility = "visible";
+      tooltip.classList.add("visible");
+    }
+
+    function hideTooltip() {
+      tooltip.classList.remove("visible");
+      tooltip.style.visibility = "hidden";
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("mouseenter", () => showTooltip(button));
+      button.addEventListener("mouseleave", hideTooltip);
+      button.addEventListener("focus", () => showTooltip(button));
+      button.addEventListener("blur", hideTooltip);
+    });
+
+    window.addEventListener("scroll", hideTooltip, { passive: true });
+    window.addEventListener("resize", hideTooltip);
+  </script>
+</body>
+</html>

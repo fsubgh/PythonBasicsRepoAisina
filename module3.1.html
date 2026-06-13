@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ввод имени пользователя</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .form {
+      width: 100%;
+      max-width: 400px;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: #4a90d9;
+    }
+
+    .hint {
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <form class="form" onsubmit="return false;">
+    <label for="username">Имя пользователя</label>
+    <input
+      type="text"
+      id="username"
+      name="username"
+      placeholder="Введите имя"
+      autocomplete="username"
+    >
+    <p class="hint">Цифры не допускаются.</p>
+  </form>
+
+  <script>
+    const usernameInput = document.getElementById("username");
+
+    usernameInput.addEventListener("input", () => {
+      const value = usernameInput.value;
+      const withoutDigits = value.replace(/\d/g, "");
+
+      if (value !== withoutDigits) {
+        const cursorPosition = usernameInput.selectionStart;
+        const digitsBeforeCursor = value
+          .slice(0, cursorPosition)
+          .replace(/[^\d]/g, "")
+          .length;
+
+        usernameInput.value = withoutDigits;
+        usernameInput.setSelectionRange(
+          cursorPosition - digitsBeforeCursor,
+          cursorPosition - digitsBeforeCursor
+        );
+      }
+    });
+  </script>
+</body>
+</html>
+
+

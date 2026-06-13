@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Светофор</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    .traffic-light {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: #2d2d44;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .light {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #333;
+      border: 4px solid #444;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .light--red.active {
+      background: #e53935;
+      box-shadow: 0 0 24px #e53935, inset 0 0 12px rgba(255, 255, 255, 0.3);
+    }
+
+    .light--yellow.active {
+      background: #fdd835;
+      box-shadow: 0 0 24px #fdd835, inset 0 0 12px rgba(255, 255, 255, 0.3);
+    }
+
+    .light--green.active {
+      background: #43a047;
+      box-shadow: 0 0 24px #43a047, inset 0 0 12px rgba(255, 255, 255, 0.3);
+    }
+
+    .switch-btn {
+      padding: 0.875rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1a1a2e;
+      background: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .switch-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+    }
+
+    .switch-btn:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="traffic-light">
+    <div class="light light--red active" data-color="red"></div>
+    <div class="light light--yellow" data-color="yellow"></div>
+    <div class="light light--green" data-color="green"></div>
+  </div>
+
+  <button class="switch-btn" id="switchBtn" type="button">Следующий цвет</button>
+
+  <script>
+    const lights = document.querySelectorAll(".light");
+    const switchBtn = document.getElementById("switchBtn");
+
+    const colors = ["red", "yellow", "green"];
+    let currentIndex = 0;
+
+    function showColor(index) {
+      lights.forEach((light, i) => {
+        light.classList.toggle("active", i === index);
+      });
+    }
+
+    switchBtn.addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % colors.length;
+      showColor(currentIndex);
+    });
+
+    showColor(currentIndex);
+  </script>
+</body>
+</html>
