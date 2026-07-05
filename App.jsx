@@ -1,12 +1,14 @@
-import FruitList from "./FruitList";
+import ButtonWithCallback from "./ButtonWithCallback";
 
 function App() {
-  const fruits = ["Яблоко", "Банан", "Апельсин", "Груша", "Киви"];
+  const handleClick = (message) => {
+    console.log(message);
+  };
 
   return (
     <div>
-      <h1>Список фруктов</h1>
-      <FruitList fruits={fruits} />
+      <h1>Callback в React</h1>
+      <ButtonWithCallback onButtonClick={handleClick} />
     </div>
   );
 }
