@@ -1,36 +1,53 @@
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
-import UserCard from "./UserCard";
+
+// Компоненты страниц
+function Home() {
+  return (
+    <div>
+      <h2>Главная</h2>
+      <p>Добро пожаловать на главную страницу!</p>
+    </div>
+  );
+}
+
+function About() {
+  return (
+    <div>
+      <h2>О нас</h2>
+      <p>Мы изучаем React и React Router.</p>
+    </div>
+  );
+}
+
+function Contacts() {
+  return (
+    <div>
+      <h2>Контакты</h2>
+      <p>Email: info@example.com</p>
+    </div>
+  );
+}
 
 function App() {
-  const users = [
-    {
-      id: 1,
-      name: "Иван Иванов",
-      age: 20,
-      email: "ivan@example.com",
-    },
-    {
-      id: 2,
-      name: "Анна Смирнова",
-      age: 22,
-      email: "anna@example.com",
-    },
-    {
-      id: 3,
-      name: "Петр Петров",
-      age: 19,
-      email: "petr@example.com",
-    },
-  ];
-
   return (
-    <div className="App">
-      <h1>Список пользователей</h1>
+    <BrowserRouter>
+      {/* Меню навигации */}
+      <nav>
+        <Link to="/">Главная</Link> |{" "}
+        <Link to="/about">О нас</Link> |{" "}
+        <Link to="/contacts">Контакты</Link>
+      </nav>
 
-      {users.map((user) => (
-        <UserCard key={user.id} user={user} />
-      ))}
-    </div>
+      <hr />
+
+      {/* Маршруты */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contacts" element={<Contacts />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
