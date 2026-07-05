@@ -1,39 +1,35 @@
 import "./App.css";
-
-let clickCount = 0;
-
-function handleClick() {
-  clickCount++;
-  console.log("Нажатий:", clickCount);
-}
-
-function handleChange(event) {
-  console.log("Имя:", event.target.value);
-}
-
-function handleMouseOver() {
-  console.log("Мышь наведена!");
-}
+import UserCard from "./UserCard";
 
 function App() {
+  const users = [
+    {
+      id: 1,
+      name: "Иван Иванов",
+      age: 20,
+      email: "ivan@example.com",
+    },
+    {
+      id: 2,
+      name: "Анна Смирнова",
+      age: 22,
+      email: "anna@example.com",
+    },
+    {
+      id: 3,
+      name: "Петр Петров",
+      age: 19,
+      email: "petr@example.com",
+    },
+  ];
+
   return (
     <div className="App">
-      {/* 1. Кнопка-счетчик */}
-      <button onClick={handleClick}>Нажми меня</button>
-      <p>Количество нажатий смотрите в консоли</p>
+      <h1>Список пользователей</h1>
 
-      {/* 2. Поле ввода */}
-      <input
-        type="text"
-        placeholder="Введите имя"
-        onChange={handleChange}
-      />
-      <p>Смотрите имя в консоли</p>
-
-      {/* 3. Наведение мышки */}
-      <div className="highlight" onMouseOver={handleMouseOver}>
-        Наведи на меня
-      </div>
+      {users.map((user) => (
+        <UserCard key={user.id} user={user} />
+      ))}
     </div>
   );
 }

@@ -1,18 +1,9 @@
-function UserCard({ name, age, color }) {
-  console.log("Ререндер UserCard");
-
+function UserCard({ user }) {
   return (
-    <div
-      style={{
-        backgroundColor: color,
-        padding: "20px",
-        borderRadius: "10px",
-        width: "200px",
-        marginBottom: "20px",
-      }}
-    >
-      <h2>{name}</h2>
-      <p>Возраст: {age}</p>
+    <div className="user-card">
+      <h3>{user.name}</h3>
+      <p>Возраст: {user.age}</p>
+      <p>Email: {user.email}</p>
     </div>
   );
 }
