@@ -1,14 +1,33 @@
-import ButtonWithCallback from "./ButtonWithCallback";
+import { useState } from "react";
+import UserCard from "./UserCard";
 
 function App() {
-  const handleClick = (message) => {
-    console.log(message);
+  const [age, setAge] = useState(20);
+  const [color, setColor] = useState("lightblue");
+
+  const changeAge = () => {
+    setAge(age + 1);
+  };
+
+  const changeColor = () => {
+    setColor(color === "lightblue" ? "lightgreen" : "lightblue");
   };
 
   return (
     <div>
-      <h1>Callback в React</h1>
-      <ButtonWithCallback onButtonClick={handleClick} />
+      <UserCard
+        name="Айжан"
+        age={age}
+        color={color}
+      />
+
+      <button onClick={changeAge}>
+        Изменить возраст
+      </button>
+
+      <button onClick={changeColor}>
+        Изменить цвет
+      </button>
     </div>
   );
 }
