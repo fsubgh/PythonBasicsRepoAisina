@@ -1,10 +1,10 @@
-import ResizableBox from "./ResizableBox";
+import TodoList from "./TodoList";
 
 function App() {
   return (
     <div>
-      <h1>useEffect и useLayoutEffect</h1>
-      <ResizableBox />
+      <h1>Список задач</h1>
+      <TodoList />
     </div>
   );
 }
