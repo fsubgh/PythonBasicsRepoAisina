@@ -1,63 +1,120 @@
-import { useContext, useState } from "react";
-import { AuthContext } from "./AuthContext";
-
-function LevelThree() {
-  const { user } = useContext(AuthContext);
-
-  return (
-    <div>
-      <h3>Уровень 3</h3>
-      {user ? <p>Добро пожаловать, {user}!</p> : <p>Пользователь не вошел</p>}
-    </div>
-  );
-}
-
-function LevelTwo() {
-  return (
-    <div>
-      <h3>Уровень 2</h3>
-      <LevelThree />
-    </div>
-  );
-}
-
-function LevelOne() {
-  return (
-    <div>
-      <h3>Уровень 1</h3>
-      <LevelTwo />
-    </div>
-  );
-}
+import { useState } from "react";
+import { produce } from "immer";
 
 function App() {
-  const { user, login, logout } = useContext(AuthContext);
-  const [name, setName] = useState("");
+  const [projects, setProjects] = useState([]);
+  const [projectName, setProjectName] = useState("");
+
+  // Добавление проекта
+  const addProject = () => {
+    if (!projectName.trim()) return;
+
+    setProjects([
+      ...projects,
+      {
+        name: projectName,
+        tasks: [],
+      },
+    ]);
+
+    setProjectName("");
+  };
+
+  // Добавление задачи
+  const addTask = (index) => {
+    const task = prompt("Введите задачу");
+
+    if (!task) return;
+
+    setProjects(
+      produce(projects, (draft) => {
+        draft[index].tasks.push({
+          text: task,
+          done: false,
+        });
+      })
+    );
+  };
+
+  // Выполнена / не выполнена
+  const toggleTask = (projectIndex, taskIndex) => {
+    setProjects(
+      produce(projects, (draft) => {
+        draft[projectIndex].tasks[taskIndex].done =
+          !draft[projectIndex].tasks[taskIndex].done;
+      })
+    );
+  };
+
+  // Удаление задачи
+  const deleteTask = (projectIndex, taskIndex) => {
+    setProjects(
+      produce(projects, (draft) => {
+        draft[projectIndex].tasks.splice(taskIndex, 1);
+      })
+    );
+  };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Авторизация через useContext</h1>
+    <div style={{ padding: 20 }}>
+      <h1>Управление проектами</h1>
 
-      {user ? (
-        <>
-          <p>Вы вошли как: <b>{user}</b></p>
-          <button onClick={logout}>Выйти</button>
-        </>
-      ) : (
-        <>
-          <input
-            type="text"
-            placeholder="Введите имя"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <button onClick={() => login(name)}>Войти</button>
-        </>
-      )}
+      <input
+        type="text"
+        placeholder="Название проекта"
+        value={projectName}
+        onChange={(e) => setProjectName(e.target.value)}
+      />
+
+      <button onClick={addProject}>
+        Добавить проект
+      </button>
 
       <hr />
 
-      <LevelOne />
+      {projects.map((project, projectIndex) => (
+        <div
+          key={projectIndex}
+          style={{
+            border: "1px solid gray",
+            margin: 10,
+            padding: 10,
+          }}
+        >
+          <h2>{project.name}</h2>
+
+          <button onClick={() => addTask(projectIndex)}>
+            Добавить задачу
+          </button>
+
+          <ul>
+            {project.tasks.map((task, taskIndex) => (
+              <li key={taskIndex}>
+                <span
+                  style={{
+                    textDecoration: task.done ? "line-through" : "none",
+                    marginRight: 10,
+                  }}
+                >
+                  {task.text}
+                </span>
+
+                <button
+                  onClick={() => toggleTask(projectIndex, taskIndex)}
+                >
+                  {task.done ? "Отменить" : "Выполнено"}
+                </button>
+
+                <button
+                  onClick={() => deleteTask(projectIndex, taskIndex)}
+                >
+                  Удалить
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 }
