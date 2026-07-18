@@ -1,83 +1,34 @@
-import React, { useReducer } from "react";
-import ContactForm from "./ContactForm";
-import ContactList from "./ContactList";
-import SearchBar from "./SearchBar";
+import React, { Component } from "react";
+import QuoteViewer from "./QuoteViewer";
 
-const initialState = {
-  contacts: [],
-  search: "",
-  error: "",
-};
+class App extends Component {
+  constructor(props) {
+    super(props);
 
-function reducer(state, action) {
-  switch (action.type) {
-    case "ADD_CONTACT":
-      if (!action.payload.name || !action.payload.phone) {
-        return {
-          ...state,
-          error: "Введите имя и номер телефона!",
-        };
-      }
-
-      return {
-        ...state,
-        error: "",
-        contacts: [
-          ...state.contacts,
-          {
-            id: Date.now(),
-            ...action.payload,
-          },
-        ],
-      };
-
-    case "DELETE_CONTACT":
-      return {
-        ...state,
-        contacts: state.contacts.filter(
-          (contact) => contact.id !== action.payload
-        ),
-      };
-
-    case "SET_SEARCH":
-      return {
-        ...state,
-        search: action.payload,
-      };
-
-    default:
-      return state;
+    this.state = {
+      showQuotes: true
+    };
   }
-}
 
-function App() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  toggleQuotes = () => {
+    this.setState({
+      showQuotes: !this.state.showQuotes
+    });
+  };
 
-  const filteredContacts = state.contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(state.search.toLowerCase())
-  );
+  render() {
+    return (
+      <div style={{ textAlign: "center", marginTop: "30px" }}>
+        <button onClick={this.toggleQuotes}>
+          {this.state.showQuotes
+            ? "Скрыть цитаты"
+            : "Показать цитаты"}
+        </button>
 
-  return (
-    <div style={{ width: "400px", margin: "20px auto" }}>
-      <h2>Контакты</h2>
-
-      <ContactForm dispatch={dispatch} />
-
-      {state.error && (
-        <p style={{ color: "red" }}>{state.error}</p>
-      )}
-
-      <SearchBar
-        search={state.search}
-        dispatch={dispatch}
-      />
-
-      <ContactList
-        contacts={filteredContacts}
-        dispatch={dispatch}
-      />
-    </div>
-  );
+        {this.state.showQuotes && <QuoteViewer />}
+      </div>
+    );
+  }
 }
 
 export default App;
