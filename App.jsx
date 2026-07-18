@@ -1,120 +1,57 @@
 import { useState } from "react";
-import { produce } from "immer";
+import useTaskStore from "./store";
 
 function App() {
-  const [projects, setProjects] = useState([]);
-  const [projectName, setProjectName] = useState("");
+  const [text, setText] = useState("");
 
-  // Добавление проекта
-  const addProject = () => {
-    if (!projectName.trim()) return;
+  const { tasks, addTask, toggleTask, deleteTask } = useTaskStore();
 
-    setProjects([
-      ...projects,
-      {
-        name: projectName,
-        tasks: [],
-      },
-    ]);
+  const handleAdd = () => {
+    if (!text.trim()) return;
 
-    setProjectName("");
-  };
-
-  // Добавление задачи
-  const addTask = (index) => {
-    const task = prompt("Введите задачу");
-
-    if (!task) return;
-
-    setProjects(
-      produce(projects, (draft) => {
-        draft[index].tasks.push({
-          text: task,
-          done: false,
-        });
-      })
-    );
-  };
-
-  // Выполнена / не выполнена
-  const toggleTask = (projectIndex, taskIndex) => {
-    setProjects(
-      produce(projects, (draft) => {
-        draft[projectIndex].tasks[taskIndex].done =
-          !draft[projectIndex].tasks[taskIndex].done;
-      })
-    );
-  };
-
-  // Удаление задачи
-  const deleteTask = (projectIndex, taskIndex) => {
-    setProjects(
-      produce(projects, (draft) => {
-        draft[projectIndex].tasks.splice(taskIndex, 1);
-      })
-    );
+    addTask(text);
+    setText("");
   };
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Управление проектами</h1>
+      <h1>Список задач</h1>
 
       <input
         type="text"
-        placeholder="Название проекта"
-        value={projectName}
-        onChange={(e) => setProjectName(e.target.value)}
+        placeholder="Введите задачу"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
       />
 
-      <button onClick={addProject}>
-        Добавить проект
+      <button onClick={handleAdd}>
+        Добавить
       </button>
 
-      <hr />
+      <ul>
+        {tasks.map((task) => (
+          <li key={task.id}>
+            <input
+              type="checkbox"
+              checked={task.done}
+              onChange={() => toggleTask(task.id)}
+            />
 
-      {projects.map((project, projectIndex) => (
-        <div
-          key={projectIndex}
-          style={{
-            border: "1px solid gray",
-            margin: 10,
-            padding: 10,
-          }}
-        >
-          <h2>{project.name}</h2>
+            <span
+              style={{
+                textDecoration: task.done ? "line-through" : "none",
+                margin: "0 10px",
+              }}
+            >
+              {task.text}
+            </span>
 
-          <button onClick={() => addTask(projectIndex)}>
-            Добавить задачу
-          </button>
-
-          <ul>
-            {project.tasks.map((task, taskIndex) => (
-              <li key={taskIndex}>
-                <span
-                  style={{
-                    textDecoration: task.done ? "line-through" : "none",
-                    marginRight: 10,
-                  }}
-                >
-                  {task.text}
-                </span>
-
-                <button
-                  onClick={() => toggleTask(projectIndex, taskIndex)}
-                >
-                  {task.done ? "Отменить" : "Выполнено"}
-                </button>
-
-                <button
-                  onClick={() => deleteTask(projectIndex, taskIndex)}
-                >
-                  Удалить
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+            <button onClick={() => deleteTask(task.id)}>
+              Удалить
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
