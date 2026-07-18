@@ -1,34 +1,65 @@
-import React, { Component } from "react";
-import QuoteViewer from "./QuoteViewer";
+import { useContext, useState } from "react";
+import { AuthContext } from "./AuthContext";
 
-class App extends Component {
-  constructor(props) {
-    super(props);
+function LevelThree() {
+  const { user } = useContext(AuthContext);
 
-    this.state = {
-      showQuotes: true
-    };
-  }
+  return (
+    <div>
+      <h3>Уровень 3</h3>
+      {user ? <p>Добро пожаловать, {user}!</p> : <p>Пользователь не вошел</p>}
+    </div>
+  );
+}
 
-  toggleQuotes = () => {
-    this.setState({
-      showQuotes: !this.state.showQuotes
-    });
-  };
+function LevelTwo() {
+  return (
+    <div>
+      <h3>Уровень 2</h3>
+      <LevelThree />
+    </div>
+  );
+}
 
-  render() {
-    return (
-      <div style={{ textAlign: "center", marginTop: "30px" }}>
-        <button onClick={this.toggleQuotes}>
-          {this.state.showQuotes
-            ? "Скрыть цитаты"
-            : "Показать цитаты"}
-        </button>
+function LevelOne() {
+  return (
+    <div>
+      <h3>Уровень 1</h3>
+      <LevelTwo />
+    </div>
+  );
+}
 
-        {this.state.showQuotes && <QuoteViewer />}
-      </div>
-    );
-  }
+function App() {
+  const { user, login, logout } = useContext(AuthContext);
+  const [name, setName] = useState("");
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Авторизация через useContext</h1>
+
+      {user ? (
+        <>
+          <p>Вы вошли как: <b>{user}</b></p>
+          <button onClick={logout}>Выйти</button>
+        </>
+      ) : (
+        <>
+          <input
+            type="text"
+            placeholder="Введите имя"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <button onClick={() => login(name)}>Войти</button>
+        </>
+      )}
+
+      <hr />
+
+      <LevelOne />
+    </div>
+  );
 }
 
 export default App;
