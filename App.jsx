@@ -1,57 +1,29 @@
-import { useState } from "react";
-import useTaskStore from "./store";
+import { useState, useCallback } from "react";
+import TodoList from "./TodoList";
+import AddTodo from "./AddTodo";
 
 function App() {
-  const [text, setText] = useState("");
+  console.log("App");
 
-  const { tasks, addTask, toggleTask, deleteTask } = useTaskStore();
+  const [todos, setTodos] = useState([]);
 
-  const handleAdd = () => {
-    if (!text.trim()) return;
-
-    addTask(text);
-    setText("");
-  };
+  const addTodo = useCallback((text) => {
+    setTodos((prevTodos) => [
+      ...prevTodos,
+      {
+        id: Date.now(),
+        text: text,
+      },
+    ]);
+  }, []);
 
   return (
-    <div style={{ padding: 20 }}>
+    <div>
       <h1>Список задач</h1>
 
-      <input
-        type="text"
-        placeholder="Введите задачу"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
+      <AddTodo onAdd={addTodo} />
 
-      <button onClick={handleAdd}>
-        Добавить
-      </button>
-
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id}>
-            <input
-              type="checkbox"
-              checked={task.done}
-              onChange={() => toggleTask(task.id)}
-            />
-
-            <span
-              style={{
-                textDecoration: task.done ? "line-through" : "none",
-                margin: "0 10px",
-              }}
-            >
-              {task.text}
-            </span>
-
-            <button onClick={() => deleteTask(task.id)}>
-              Удалить
-            </button>
-          </li>
-        ))}
-      </ul>
+      <TodoList todos={todos} />
     </div>
   );
 }
