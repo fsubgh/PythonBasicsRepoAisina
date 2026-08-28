@@ -1,124 +1,87 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import {
+  IntlProvider,
+  FormattedMessage,
+  FormattedTime,
+  FormattedNumber,
+} from "react-intl";
 
-const API_URL = "https://jsonplaceholder.typicode.com/todos";
+const messages = {
+  en: {
+    greeting: "Hello! Welcome to our application!",
+    time: "Current time:",
+    price: "Price:",
+  },
+  ru: {
+    greeting: "Привет! Добро пожаловать в наше приложение!",
+    time: "Текущее время:",
+    price: "Цена:",
+  },
+  fr: {
+    greeting: "Bonjour ! Bienvenue dans notre application !",
+    time: "Heure actuelle :",
+    price: "Prix :",
+  },
+};
 
 function App() {
-  const [title, setTitle] = useState("");
+  const [locale, setLocale] = useState("en");
 
-  const queryClient = useQueryClient();
+  const now = new Date();
+  const price = 2500.5;
 
-  // Получение задач
-  const {
-    data: todos = [],
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["todos"],
-    queryFn: async () => {
-      const response = await fetch(`${API_URL}?_limit=10`);
-
-      if (!response.ok) {
-        throw new Error("Ошибка загрузки задач");
-      }
-
-      return response.json();
-    },
-  });
-
-  // Добавление задачи
-  const mutation = useMutation({
-    mutationFn: async (newTodo) => {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo),
-      });
-
-      if (!response.ok) {
-        throw new Error("Ошибка добавления задачи");
-      }
-
-      return response.json();
-    },
-
-    onSuccess: (newTodo) => {
-      // JSONPlaceholder не сохраняет POST-запросы,
-      // поэтому добавляем новую задачу прямо в кеш.
-      queryClient.setQueryData(["todos"], (oldTodos = []) => [
-        newTodo,
-        ...oldTodos,
-      ]);
-
-      setTitle("");
-    },
-
-    onError: (error) => {
-      console.error("Ошибка:", error);
-    },
-  });
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (!title.trim()) return;
-
-    mutation.mutate({
-      title: title,
-      completed: false,
-      userId: 1,
-    });
-  };
-
-  if (isLoading) {
-    return <p>Загрузка задач...</p>;
-  }
-
-  if (isError) {
-    return <p>Ошибка: {error.message}</p>;
-  }
+  // Валюта зависит от выбранного языка
+  const currency = {
+    en: "USD",
+    ru: "RUB",
+    fr: "EUR",
+  }[locale];
 
   return (
-    <div>
-      <h1>Todo List</h1>
+    <IntlProvider
+      locale={locale}
+      messages={messages[locale]}
+    >
+      <div className="app">
+        <h1>
+          <FormattedMessage id="greeting" />
+        </h1>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          placeholder="Введите задачу"
-          disabled={mutation.isPending}
-        />
+        <p>
+          <FormattedMessage id="time" />{" "}
+          <FormattedTime
+            value={now}
+            hour="2-digit"
+            minute="2-digit"
+          />
+        </p>
 
-        <button
-          type="submit"
-          disabled={mutation.isPending}
-        >
-          {mutation.isPending ? "Добавление..." : "Добавить"}
-        </button>
-      </form>
+        <p>
+          <FormattedMessage id="price" />{" "}
+          <FormattedNumber
+            value={price}
+            style="currency"
+            currency={currency}
+          />
+        </p>
 
-      {mutation.isError && (
-        <p>Не удалось добавить задачу: {mutation.error.message}</p>
-      )}
+        <div className="buttons">
+          <button onClick={() => setLocale("en")}>
+            English
+          </button>
 
-      {mutation.isSuccess && (
-        <p>Задача успешно добавлена!</p>
-      )}
+          <button onClick={() => setLocale("ru")}>
+            Русский
+          </button>
 
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>
-            {todo.title}
-          </li>
-        ))}
-      </ul>
-    </div>
+          <button onClick={() => setLocale("fr")}>
+            Français
+          </button>
+        </div>
+      </div>
+    </IntlProvider>
   );
 }
 
 export default App;
+
