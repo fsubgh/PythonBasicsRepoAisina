@@ -1,85 +1,136 @@
+
 import { useState } from "react";
 import {
-  IntlProvider,
-  FormattedMessage,
-  FormattedTime,
-  FormattedNumber,
-} from "react-intl";
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+  Link,
+} from "react-router-dom";
 
-const messages = {
-  en: {
-    greeting: "Hello! Welcome to our application!",
-    time: "Current time:",
-    price: "Price:",
-  },
+// Middleware для защищённых страниц
+function Middleware({ isAuthenticated, children }) {
+  const location = useLocation();
 
-  ru: {
-    greeting: "Здравствуйте! Добро пожаловать в наше приложение!",
-    time: "Текущее время:",
-    price: "Цена:",
-  },
+  if (!isAuthenticated) {
+    return (
+      <Navigate
+        to="/"
+        state={{
+          message: "Для доступа к этой странице необходимо авторизоваться.",
+          from: location.pathname,
+        }}
+        replace
+      />
+    );
+  }
 
-  fr: {
-    greeting: "Bonjour ! Bienvenue dans notre application !",
-    time: "Heure actuelle :",
-    price: "Prix :",
-  },
-};
+  return children;
+}
 
-function App() {
-  const [locale, setLocale] = useState("en");
-
-  const currency = {
-    en: "USD",
-    ru: "RUB",
-    fr: "EUR",
-  };
-
-  const currentTime = new Date();
+// Главная страница
+function Home({ isAuthenticated, setIsAuthenticated }) {
+  const location = useLocation();
 
   return (
-    <IntlProvider
-      locale={locale}
-      messages={messages[locale]}
-    >
-      <div>
-        <h1>
-          <FormattedMessage id="greeting" />
-        </h1>
+    <div>
+      <h1>Главная страница</h1>
 
-        <p>
-          <FormattedMessage id="time" />{" "}
-          <FormattedTime
-            value={currentTime}
-            hour="2-digit"
-            minute="2-digit"
-          />
+      {location.state?.message && (
+        <p style={{ color: "red" }}>
+          {location.state.message}
         </p>
+      )}
 
-        <p>
-          <FormattedMessage id="price" />{" "}
-          <FormattedNumber
-            value={2500.5}
-            style="currency"
-            currency={currency[locale]}
-          />
+      {!isAuthenticated ? (
+        <button onClick={() => setIsAuthenticated(true)}>
+          Войти
+        </button>
+      ) : (
+        <p style={{ color: "green" }}>
+          Вы авторизованы!
         </p>
+      )}
 
-        <div>
-          <button onClick={() => setLocale("en")}>
-            English
-          </button>
+      <hr />
 
-          <button onClick={() => setLocale("ru")}>
-            Русский
-          </button>
+      <nav>
+        <Link to="/">Главная</Link>{" "}
+        <Link to="/profile">Профиль</Link>{" "}
+        <Link to="/settings">Настройки</Link>
+      </nav>
+    </div>
+  );
+}
 
-          <button onClick={() => setLocale("fr")}>
-            Français
-          </button>
-        </div>
-      </div>
-    </IntlProvider>
+// Страница профиля
+function Profile() {
+  return (
+    <div>
+      <h1>Профиль пользователя</h1>
+      <p>Вы успешно вошли в систему и получили доступ к профилю.</p>
+
+      <Link to="/">Вернуться на главную</Link>
+    </div>
+  );
+}
+
+// Страница настроек
+function Settings() {
+  return (
+    <div>
+      <h1>Настройки</h1>
+      <p>Вы успешно вошли в систему и получили доступ к настройкам.</p>
+
+      <Link to="/">Вернуться на главную</Link>
+    </div>
+  );
+}
+
+// Основное приложение
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Главная доступна всем */}
+        <Route
+          path="/"
+          element={
+            <Home
+              isAuthenticated={isAuthenticated}
+              setIsAuthenticated={setIsAuthenticated}
+            />
+          }
+        />
+
+        {/* Защищённый профиль */}
+        <Route
+          path="/profile"
+          element={
+            <Middleware isAuthenticated={isAuthenticated}>
+              <Profile />
+            </Middleware>
+          }
+        />
+
+        {/* Защищённые настройки */}
+        <Route
+          path="/settings"
+          element={
+            <Middleware isAuthenticated={isAuthenticated}>
+              <Settings />
+            </Middleware>
+          }
+        />
+
+        {/* Если такого адреса нет — на главную */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
