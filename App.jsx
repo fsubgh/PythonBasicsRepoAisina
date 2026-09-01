@@ -1,28 +1,85 @@
-import { useState, lazy, Suspense } from "react";
+import { useState } from "react";
+import {
+  IntlProvider,
+  FormattedMessage,
+  FormattedTime,
+  FormattedNumber,
+} from "react-intl";
 
-// UserList будет загружен только тогда,
-// когда пользователь нажмёт кнопку
-const UserList = lazy(() => import("./UserList"));
+const messages = {
+  en: {
+    greeting: "Hello! Welcome to our application!",
+    time: "Current time:",
+    price: "Price:",
+  },
+
+  ru: {
+    greeting: "Здравствуйте! Добро пожаловать в наше приложение!",
+    time: "Текущее время:",
+    price: "Цена:",
+  },
+
+  fr: {
+    greeting: "Bonjour ! Bienvenue dans notre application !",
+    time: "Heure actuelle :",
+    price: "Prix :",
+  },
+};
 
 function App() {
-  const [showUsers, setShowUsers] = useState(false);
+  const [locale, setLocale] = useState("en");
+
+  const currency = {
+    en: "USD",
+    ru: "RUB",
+    fr: "EUR",
+  };
+
+  const currentTime = new Date();
 
   return (
-    <div>
-      <h1>Главная страница</h1>
+    <IntlProvider
+      locale={locale}
+      messages={messages[locale]}
+    >
+      <div>
+        <h1>
+          <FormattedMessage id="greeting" />
+        </h1>
 
-      {!showUsers && (
-        <button onClick={() => setShowUsers(true)}>
-          Показать пользователей
-        </button>
-      )}
+        <p>
+          <FormattedMessage id="time" />{" "}
+          <FormattedTime
+            value={currentTime}
+            hour="2-digit"
+            minute="2-digit"
+          />
+        </p>
 
-      {showUsers && (
-        <Suspense fallback={<p>Загрузка списка пользователей...</p>}>
-          <UserList />
-        </Suspense>
-      )}
-    </div>
+        <p>
+          <FormattedMessage id="price" />{" "}
+          <FormattedNumber
+            value={2500.5}
+            style="currency"
+            currency={currency[locale]}
+          />
+        </p>
+
+        <div>
+          <button onClick={() => setLocale("en")}>
+            English
+          </button>
+
+          <button onClick={() => setLocale("ru")}>
+            Русский
+          </button>
+
+          <button onClick={() => setLocale("fr")}>
+            Français
+          </button>
+        </div>
+      </div>
+    </IntlProvider>
   );
 }
 
